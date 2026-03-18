@@ -839,6 +839,7 @@ Owner: Face Surgery Simulator Team</p>
 <li><code>docs/04_ARCHITECTURE/05_EXTERNAL_LIBRARY_IMPROVEMENT_RESEARCH_2026-03-18.md</code></li>
 <li><code>docs/04_ARCHITECTURE/06_COMMERCIAL_APP_FACE_TECH_RESEARCH_2026-03-18.md</code></li>
 <li><code>docs/04_ARCHITECTURE/06_FACE_BEAUTIFICATION_APP_TECHNOLOGY_RESEARCH_2026-03-18.md</code></li>
+<li><code>docs/04_ARCHITECTURE/07_TECHNOLOGY_GAP_ANALYSIS_2026-03-19.md</code></li>
 </ol>
 <h2 id="docs05_style">docs/05_STYLE</h2>
 <ol>
@@ -2890,6 +2891,7 @@ BENCH_METRIC_MAX_HOT_RATIO=0.040
 <li><code>docs/04_ARCHITECTURE/04_3D_LIBRARY_EVALUATION_STRATEGY_2026-03-01.md</code> -- 3D 라이브러리 평가 전략</li>
 <li><code>docs/04_ARCHITECTURE/05_EXTERNAL_LIBRARY_IMPROVEMENT_RESEARCH_2026-03-18.md</code> -- 외부 라이브러리 개선 조사</li>
 <li><code>docs/04_ARCHITECTURE/06_FACE_BEAUTIFICATION_APP_TECHNOLOGY_RESEARCH_2026-03-18.md</code> -- 얼굴 뷰티피케이션 앱 기술 조사</li>
+<li><code>docs/04_ARCHITECTURE/07_TECHNOLOGY_GAP_ANALYSIS_2026-03-19.md</code> -- 기술 갭 분석 (10개 미조사 영역)</li>
 </ul>
 <h2 id="사용-원칙">사용 원칙</h2>
 <ol>
@@ -5401,6 +5403,236 @@ torch.set_float32_matmul_precision(&#39;high&#39;)
 <li>비디오 프리뷰 기능 추가 시 필요</li>
 </ul>
 <hr>
+<h2 id="2차-갭-분석-추가-발견">2차 갭 분석 (추가 발견)</h2>
+<p>1차 분석 이후 교차 검증을 통해 추가로 발견된 6개 영역입니다.</p>
+<h3 id="gap-11-wcag-접근성-critical">Gap 11: WCAG 접근성 (CRITICAL)</h3>
+<p><strong>미국 HHS Section 504 규정</strong>: 2026년 5월 11일까지 WCAG 2.1 Level AA 준수 필수.
+의료 기관(15인 이상)의 환자 포털, 모바일 앱, 예약 도구 등에 적용.</p>
+<table>
+<thead>
+<tr>
+<th>영향 영역</th>
+<th>요구사항</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>색상 대비</td>
+<td>피부톤 시각화에서 4.5:1 최소 대비</td>
+</tr>
+<tr>
+<td>키보드 내비게이션</td>
+<td>슬라이더, 3D 뷰어 키보드 조작 가능</td>
+</tr>
+<tr>
+<td>스크린 리더</td>
+<td>전후 비교 이미지 alt text</td>
+</tr>
+<tr>
+<td>3D 뷰어</td>
+<td>Three.js/R3F 접근성 대안 (2D 뷰 또는 설명 출력)</td>
+</tr>
+</tbody></table>
+<h3 id="gap-12-임상-검증-방법론-important">Gap 12: 임상 검증 방법론 (IMPORTANT)</h3>
+<p>경쟁사 검증 데이터:</p>
+<ul>
+<li><strong>Crisalix</strong>: 4,517명 의사, 229,911건 상담, 111개국 (2014-2025)</li>
+<li><strong>Crisalix vs Vectra XT</strong>: intra-method CV ~3.2-3.3%</li>
+<li><strong>한계</strong>: 처진 가슴, 복합 시술에서 정확도 저하</li>
+</ul>
+<p>본 프로젝트 적용: naturalness_grade + roi_delta 메트릭 기반 검증 프레임워크를 임상 결과 비교 연구로 확장 필요.</p>
+<h3 id="gap-13-color-science--피부톤-일관성-important">Gap 13: Color Science / 피부톤 일관성 (IMPORTANT)</h3>
+<table>
+<thead>
+<tr>
+<th>기술</th>
+<th>용도</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CIE L<em>a</em>b* 색공간</td>
+<td>디바이스 독립적 피부톤 평가 표준</td>
+</tr>
+<tr>
+<td>ICC 프로파일</td>
+<td>의료용 디스플레이 색 보정</td>
+</tr>
+<tr>
+<td>교차 디바이스 일관성</td>
+<td>클리닉 모니터 vs 환자 스마트폰 색차 보정</td>
+</tr>
+</tbody></table>
+<p>변형 전후 비교에서 피부톤 불일치는 환자 불만의 주요 원인.</p>
+<h3 id="gap-14-설명-가능한-ai--xai-important">Gap 14: 설명 가능한 AI / XAI (IMPORTANT)</h3>
+<ul>
+<li>FDA 2025.01 가이던스: AI 의료기기에 &quot;임상적으로 관련된 설명&quot; 요구</li>
+<li>EU AI Act: 고위험 AI 시스템에 투명성 + 인간 감독 의무</li>
+<li>현재 프로젝트의 <code>naturalness_grade</code> + <code>recommendations</code> 시스템이 XAI 기반이 될 수 있음</li>
+<li>추가 필요: 변형 결정 근거의 문서화된 설명 프레임워크</li>
+</ul>
+<h3 id="gap-15-cloud-gpu-배포-important">Gap 15: Cloud GPU 배포 (IMPORTANT)</h3>
+<table>
+<thead>
+<tr>
+<th>서비스</th>
+<th>GPU</th>
+<th>비용 (시간당)</th>
+<th>특징</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>AWS Inferentia2</td>
+<td>inf2</td>
+<td>~$0.76</td>
+<td>H100 대비 30-40% 저렴</td>
+</tr>
+<tr>
+<td>GCP TPU v6e</td>
+<td>TPU</td>
+<td>~$1.20</td>
+<td>4x 가격 대비 성능 (Midjourney 사례)</td>
+</tr>
+<tr>
+<td>GCP L40S</td>
+<td>L40S</td>
+<td>~$0.79</td>
+<td>ComfyUI 호환 (NVIDIA)</td>
+</tr>
+<tr>
+<td>Azure A100</td>
+<td>A100</td>
+<td>~$1.60</td>
+<td>고성능, 높은 비용</td>
+</tr>
+</tbody></table>
+<p>ComfyUI + SD inference는 NVIDIA GPU 필수 (Inferentia/TPU 비호환).</p>
+<h3 id="gap-16-mlops--모델-버전-관리-important">Gap 16: MLOps / 모델 버전 관리 (IMPORTANT)</h3>
+<table>
+<thead>
+<tr>
+<th>도구</th>
+<th>용도</th>
+<th>적합도</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>DVC</strong></td>
+<td>대용량 모델/데이터 Git 버전 관리</td>
+<td>BiSeNet, 3DDFA, DECA 모델 파일</td>
+</tr>
+<tr>
+<td><strong>MLflow 3.0</strong></td>
+<td>실험 추적, 모델 레지스트리</td>
+<td>naturalness 파라미터 튜닝 이력</td>
+</tr>
+<tr>
+<td><strong>W&amp;B</strong></td>
+<td>시각화 + 팀 협업</td>
+<td>품질 메트릭 대시보드</td>
+</tr>
+<tr>
+<td><strong>GitHub Actions</strong></td>
+<td>CI/CD 자동화</td>
+<td>모델 변경 시 품질 회귀 테스트</td>
+</tr>
+</tbody></table>
+<p>현재: ComfyUI checkpoint + PyTorch 모델을 수동 관리. 모델 변경 시 naturalness_grade 회귀 리스크 있음.</p>
+<hr>
+<h2 id="전체-커버리지-현황">전체 커버리지 현황</h2>
+<table>
+<thead>
+<tr>
+<th>범주</th>
+<th>상태</th>
+<th>세부</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>3D 재구성 / 랜드마크 / 파싱</td>
+<td><strong>완료</strong></td>
+<td>3DDFA, DECA, FLAME, MediaPipe, BiSeNet</td>
+</tr>
+<tr>
+<td>TPS Warp / GPU 가속</td>
+<td><strong>완료</strong></td>
+<td>kornia, torch-tps</td>
+</tr>
+<tr>
+<td>AI Inpainting / Diffusion</td>
+<td><strong>완료</strong></td>
+<td>SD 1.5, SDXL, FLUX, IP-Adapter</td>
+</tr>
+<tr>
+<td>3D 렌더링 / WebGPU</td>
+<td><strong>완료</strong></td>
+<td>Three.js, R3F, WebGPU</td>
+</tr>
+<tr>
+<td>상용 앱 분석</td>
+<td><strong>완료</strong></td>
+<td>SNOW, Zoom, Ulike, FaceApp 등 7개</td>
+</tr>
+<tr>
+<td>벤치마크 데이터셋</td>
+<td><strong>완료</strong></td>
+<td>FFHQ, CelebA-HQ, K-Face 등 15+</td>
+</tr>
+<tr>
+<td>Face Relighting</td>
+<td><strong>완료</strong></td>
+<td>SynthLight, DPR, DiFaReli++</td>
+</tr>
+<tr>
+<td>Face Reenactment</td>
+<td><strong>완료</strong></td>
+<td>LivePortrait, EMOPortraits</td>
+</tr>
+<tr>
+<td>규제 / 개인정보</td>
+<td><strong>완료</strong></td>
+<td>EU AI Act, GDPR, FDA, KFDA</td>
+</tr>
+<tr>
+<td>의료 시뮬레이션 경쟁사</td>
+<td><strong>완료</strong></td>
+<td>Crisalix, Vectra, New Look Now</td>
+</tr>
+<tr>
+<td>Multi-View / Texture SR</td>
+<td><strong>완료</strong></td>
+<td>MVGenMaster, MRSNet</td>
+</tr>
+<tr>
+<td><strong>접근성 (WCAG)</strong></td>
+<td><strong>추가됨</strong></td>
+<td>HHS 2026.05, WCAG 2.1 AA</td>
+</tr>
+<tr>
+<td><strong>임상 검증</strong></td>
+<td><strong>추가됨</strong></td>
+<td>Crisalix CV ~3.3% 정확도</td>
+</tr>
+<tr>
+<td><strong>Color Science</strong></td>
+<td><strong>추가됨</strong></td>
+<td>CIE L<em>a</em>b*, ICC 프로파일</td>
+</tr>
+<tr>
+<td><strong>XAI</strong></td>
+<td><strong>추가됨</strong></td>
+<td>FDA/EU 설명 가능성 요구</td>
+</tr>
+<tr>
+<td><strong>Cloud GPU</strong></td>
+<td><strong>추가됨</strong></td>
+<td>Inferentia2, TPU v6e, L40S 비용</td>
+</tr>
+<tr>
+<td><strong>MLOps</strong></td>
+<td><strong>추가됨</strong></td>
+<td>DVC, MLflow 3.0, W&amp;B</td>
+</tr>
+</tbody></table>
+<hr>
 <h2 id="참고-문헌">참고 문헌</h2>
 <ul>
 <li><a href="https://en.wikipedia.org/wiki/Flux_(text-to-image_model)">FLUX</a></li>
@@ -5416,6 +5648,14 @@ torch.set_float32_matmul_precision(&#39;high&#39;)
 <li><a href="https://iclg.com/practice-areas/digital-health-laws-and-regulations/korea">한국 디지털 의료제품법</a></li>
 <li><a href="https://cvpr.thecvf.com/virtual/2025/poster/34015">MVGenMaster (CVPR 2025)</a></li>
 <li><a href="https://www.mdpi.com/2673-2688/7/1/20">MRSNet</a></li>
+<li><a href="https://www.mcdermottlaw.com/insights/may-2026-deadline-hhs-imposes-accessibility-standards-for-healthcare-company-websites-mobile-apps-kiosks/">HHS WCAG 2.1 AA 2026.05 규정</a></li>
+<li><a href="https://esmed.org/MRA/mra/article/view/2395">Crisalix vs Vectra XT 비교 연구</a></li>
+<li><a href="https://onlinelibrary.wiley.com/doi/10.1111/ics.70090">피부톤 평가 신뢰성 (2025)</a></li>
+<li><a href="https://www.color.org/groups/medical/medical_imaging_wg.xalter">ICC Medical Imaging Working Group</a></li>
+<li><a href="https://www.complizen.ai/post/fda-ai-medical-device-regulation-2025">FDA AI 의료기기 가이던스 2025</a></li>
+<li><a href="https://getdeploying.com/gpus">Cloud GPU 비용 비교 2026</a></li>
+<li><a href="https://mljourney.com/model-versioning-strategies-dvc-vs-mlflow-vs-weights-biases/">MLOps 도구 비교: DVC vs MLflow vs W&amp;B</a></li>
+<li><a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11413724/">Apple Vision Pro 의료 활용</a></li>
 </ul>
 </div>
     </article><article id="05_style-00_readme-md" class="page" hidden>
